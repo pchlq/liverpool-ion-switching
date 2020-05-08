@@ -1,0 +1,9 @@
+EPOCHS = 150
+NNBATCHSIZE = 20 # 16
+GROUP_BATCH_SIZE = 4000
+SEED = 100
+LR = 0.001
+SPLITS = 5
+
+flip = False
+noise = False
