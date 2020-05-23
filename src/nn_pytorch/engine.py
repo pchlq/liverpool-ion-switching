@@ -1,5 +1,5 @@
 # from config import DEVICE
-from tqdm.notebook import tqdm
+from tqdm import tqdm
 import torch
 import numpy as np
 from sklearn.metrics import f1_score
@@ -34,11 +34,13 @@ def train_fn(data_loader, model, optimizer, device, criterion, scheduler=None):
         # perform a single optimization step (parameter update)
         optimizer.step()
         
-        scheduler.step(loss)
+        scheduler.step() # loss
         # record training lossa
         train_losses.append(loss.item())
         train_true = torch.cat([train_true, y_], 0)
         train_preds = torch.cat([train_preds, predictions_], 0)
+
+    # optimizer.swap_swa_sgd()
 
     train_loss = np.average(train_losses)
     train_score = f1_score(train_true.cpu().detach().numpy(), 

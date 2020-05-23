@@ -37,12 +37,12 @@ def create_signal_mod(train):
     for ch in train[train['batch']==7]['open_channels'].unique():
         idxs_noisy = (train['open_channels']==ch) & (left<train.index) & (train.index<right)
         idxs_not_noisy = (train['open_channels']==ch) & ~idxs_noisy
-        mean = train[idxs_not_noisy]['signal'].mean()
+        mean = train.loc[idxs_not_noisy, 'signal'].mean()
 
         idxs_outlier = idxs_noisy & (thresh_dict[ch][1]<train['signal'].values)
-        train['signal_mod'][idxs_outlier]  = mean
+        train.loc[idxs_outlier, 'signal_mod']  = mean
         idxs_outlier = idxs_noisy & (train['signal'].values<thresh_dict[ch][0])
-        train['signal_mod'][idxs_outlier]  = mean
+        train.loc[idxs_outlier, 'signal_mod']  = mean
     train['signal'] = train['signal_mod'].values
     train.drop(['batch', 'signal_mod'], axis=1, inplace=True)
     
@@ -121,6 +121,8 @@ def feature_selection(train, test):
 def split(GROUP_BATCH_SIZE=config.GROUP_BATCH_SIZE, SPLITS=config.SPLITS):
     print('Reading Data Started...')
     train, test, sample_submission = read_data()
+    train = create_signal_mod(train)
+    train = denois_train(train)
     train, test = normalize(train, test)
     print('Reading and Normalizing Data Completed')
     print('Creating Features')

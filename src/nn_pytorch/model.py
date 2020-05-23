@@ -83,28 +83,41 @@ class Classifier(nn.Module):
         #self.attention = Attention(input_size,4000)
         #self.rnn = nn.RNN(input_size, 64, 2, batch_first=True, nonlinearity='relu')
        
-        
+    
         self.wave_block1 = Wave_Block(128,16,12)
+        self.bn1 = nn.BatchNorm1d(16)
         self.wave_block2 = Wave_Block(16,32,8)
+        self.bn2 = nn.BatchNorm1d(32)
         self.wave_block3 = Wave_Block(32,64,4)
+        self.bn3 = nn.BatchNorm1d(64)
         self.wave_block4 = Wave_Block(64, 128, 1)
+        self.bn4 = nn.BatchNorm1d(128)
         self.fc = nn.Linear(128, 11)
+        self.dropout = nn.Dropout(0.1)
+        
             
     def forward(self,x):
         x,_ = self.LSTM1(x)
         x = x.permute(0, 2, 1)
-      
+        # x = self.bn4(x)
         x = self.wave_block1(x)
+        x = self.bn1(x)
         x = self.wave_block2(x)
+        x = self.bn2(x)
         x = self.wave_block3(x)
+        x = self.bn3(x)
         
         #x,_ = self.LSTM(x)
         x = self.wave_block4(x)
+        x = self.bn4(x)
+        # x = self.dropout(x)
         x = x.permute(0, 2, 1)
         x,_ = self.LSTM(x)
+        # x = self.dropout(x)
         #x = self.conv1(x)
         #print(x.shape)
         #x = self.rnn(x)
         #x = self.attention(x)
+        x = self.dropout(x)
         x = self.fc(x)
         return x
