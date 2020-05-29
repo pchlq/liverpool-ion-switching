@@ -2,8 +2,19 @@ from torch.utils.data import Dataset, DataLoader
 import torch
 import numpy as np
 
+
 class IonDataset(Dataset):
-    def __init__(self, data, labels, training=True, transform=None, seq_len=5000, flip=0.5, noise_level=0, class_split=0.0):
+    def __init__(
+        self,
+        data,
+        labels,
+        training=True,
+        transform=None,
+        seq_len=5000,
+        flip=0.5,
+        noise_level=0,
+        class_split=0.0,
+    ):
         self.data = data
         self.labels = labels
         self.transform = transform

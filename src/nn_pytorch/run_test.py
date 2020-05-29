@@ -17,7 +17,7 @@
 #         pred_list = []
 #         with torch.no_grad():
 #             for x, y in tqdm(test_dataloader):
-                
+
 #                 x = x.to(config.DEVICE)
 #                 y = y.to(config.DEVICE)
 
